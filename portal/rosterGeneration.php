@@ -39,7 +39,7 @@
 											</div>
 										</div>
 									</div>
-                                    <?php if($message != ""){ echo $message;}; echo $data["user_id"]; ?>
+                                    <?php if($message != ""){ echo $message;}; ?>
                                     
 									<div class="box">
                                         <div class="box-body">

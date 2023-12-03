@@ -1,6 +1,5 @@
 <?php
-    // include "portal/includes/auth.php";
-	
+
 	if(isset($_COOKIE['mau_user_token'])) {
 		$token = $_COOKIE['mau_user_token'];
 		$jsonData = $_COOKIE['mau_user_data'];
@@ -9,21 +8,42 @@
 		header('Location: ../index.php');
 	}
 
+    include "includes/db.php";
     $message = "";
-    if(isset($_POST["add_position_btn"])){
 
-        include "includes/db.php";
+    $post = $_GET["id"];
+    $safePost = $conn->real_escape_string($post);
+    $getPostQuery = "SELECT * FROM duty_positions WHERE position_id = '$safePost'";
+    $result = $conn->query($getPostQuery);
+
+    if ($result) {
+        while ($row = $result->fetch_assoc()) {
+            $positionName = $row['position_name'];
+            $requiredStaff = $row['staff_required'];
+        }
+    } else {
+        $message = '
+            <div class="alert alert-danger" role="alert">
+            Error executing the query: '.$conn->error.'!
+            </div>
+        ';
+    }
+    
+    if(isset($_POST["edit_position_btn"])){
 
         $unhandled_post_name = trim($_POST["post_name"]);
         $post_name = mysqli_real_escape_string($conn, $unhandled_post_name);
         $staff_required = $_POST["staff_required"];
         
-        $insertQuery = "INSERT INTO duty_positions (position_id, position_name, staff_required) VALUES (DEFAULT, '$post_name', '$staff_required')";
+        $updateQuery = "UPDATE duty_positions SET position_name = '$post_name', staff_required = '$staff_required' WHERE position_id = '$post'";
 
-        if ($conn->query($insertQuery) === TRUE) {
+        if ($conn->query($updateQuery) === TRUE) {
+
+            $positionName = $unhandled_post_name;
+            $requiredStaff = $staff_required;
             $message = '
                 <div class="alert alert-success" role="alert">
-                    The Duty Position <strong>'.$post_name.'</strong> has been added successfully!
+                    The Duty Position <strong>'.$unhandled_post_name.'</strong> has been added successfully!
                 </div>
             ';
         }else{
@@ -59,7 +79,7 @@
                                     
 									<div class="box bg-transparent no-shadow mb-0">
 										<div class="box-header no-border">
-											<h4 class="box-title">Add Duty Post</h4>							
+											<h4 class="box-title">Edit Duty Post</h4>							
 											<div class="box-controls pull-right d-md-flex d-none">
 											</div>
 										</div>
@@ -72,18 +92,18 @@
                                                     <label class="form-label">Post Name</label>
                                                     <div class="input-group mb-3">
                                                         <span class="input-group-text bg-transparent"><i class="fa-solid fa-location"></i></span>
-                                                        <input type="text" class="form-control ps-15 bg-transparent" name="post_name" placeholder="Post Name (Eg.Vice Chancellor Residence Mbamba)" required>
+                                                        <input type="text" class="form-control ps-15 bg-transparent" value="<?php echo $positionName; ?>" name="post_name" placeholder="Post Name (Eg.Vice Chancellor Residence Mbamba)" required>
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
                                                     <label class="form-label">No. of Staff Required Per Day</label>
                                                     <div class="input-group mb-3">
                                                         <span class="input-group-text bg-transparent"><i class="fa-solid fa-user"></i></span>
-                                                        <input type="number" value="2" class="form-control ps-15 bg-transparent" name="staff_required" placeholder="Staff Required (Eg. 2)" required>
+                                                        <input type="number" value="<?php echo $requiredStaff; ?>" class="form-control ps-15 bg-transparent" name="staff_required" placeholder="Staff Required (Eg. 2)" required>
                                                     </div>
                                                 </div>
 
-                                                <button type="submit" name="add_position_btn" class="waves-effect waves-light btn mb-5 bg-gradient-primary">Submit</button>
+                                                <button type="submit" name="edit_position_btn" class="waves-effect waves-light btn mb-5 bg-gradient-primary">Update</button>
                                             </form>
                                         </div>	
 									</div>

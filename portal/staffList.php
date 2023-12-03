@@ -186,7 +186,7 @@
                         { "data": "rank" },
                         { "data": null,
                             "render": function(data, type, row) {
-                                return `<button type="button" class="btn btn-danger"><i class="fa-solid fa-pen-to-square"></i></button>`;
+                                return `<a href="editStaff.php?staffId=${data.user_id}"><button type="button" class="btn btn-danger"><i class="fa-solid fa-pen-to-square"></i></button></a>`;
                             }
                         }
                     ]

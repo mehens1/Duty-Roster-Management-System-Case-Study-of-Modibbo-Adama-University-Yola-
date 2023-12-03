@@ -176,7 +176,7 @@
                         { "data": "staff_required" },
                         { "data": null,
                             "render": function(data, type, row) {
-                                return `<button type="button" class="btn btn-danger"><i class="fa-solid fa-pen-to-square"></i></button>`;
+                                return `<a href="editPost.php?id=${data.position_id}"><button type="button" class="btn btn-danger"><i class="fa-solid fa-pen-to-square"></i></button></a>`;
                             }
                         }
                     ]
